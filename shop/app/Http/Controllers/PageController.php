@@ -11,6 +11,7 @@ use App\Customer;
 use App\Bill;
 use App\BillDetail;
 use App\User;
+use Illuminate\Support\Facades\DB;
 use Hash;
 use Auth;
 class PageController extends Controller
@@ -32,13 +33,62 @@ class PageController extends Controller
         $loap_sp = ProductType::where('id',$type)->first();;
         return view('page.loai_sanpham',compact('sp_theoloai','sp_khac','loai','loap_sp'));
     }
+
+    public static function sanpham_tuongtu($id) {
+        $prob_array = array();
+        $bills = BillDetail::where('id_product', '=', $id)->get(); // lay list cac hoa don ma co san pham
+        foreach ($bills as $bill) { // voi moi hoa don
+            $products = BillDetail::where('id_bill', '=', $bill->id_bill)->where('id_product', '<>', $id)->get(); // lay list cac san pham trong hoa don ma khac san pham A
+            foreach ($products as $p) { // voi moi san pham trong list
+                if (array_key_exists($p->id_product, $prob_array)) { // kiem tra xem co san pham trong mang dem hay chua
+                    $prob_array[$p->id_product] += 1; // neu co roi thi cong them cho san pham trong mang dem
+                } else {
+                    $prob_array[$p->id_product] = 1; // neu chua co thì khoi tao bang 1
+                }
+            }
+        }
+        arsort($prob_array); // ham sap xep mang dem theo thu tu từ cao xuong thap
+
+        $ids = array(); // khoi tao mang luu id cua cac san pham tuong tu
+        foreach ($prob_array as $key => $value) { // cho moi san pham trong mang dem
+            array_push($ids, $key); // day id cua san pham vao mang luu id
+        }
+
+        $sanpham = Product::where('id', $id)->first();
+        $sp_danhmuc = Product::where('id_type',$sanpham->id_type)->where('id', '<>', $id)->get(); // lay san pham trong danh muc
+        foreach ($sp_danhmuc as $s) { // cho moi san pham trong danh muc
+            array_push($ids, $s->id); // day id cua san pham vao mang luu id
+        }
+
+        return $ids;
+    }
+
+    public static function sanpham_banchay() {
+        $sanpham = BillDetail::groupBy('id_product')->selectRaw('sum(quantity) as sum, id_product')->orderBy('sum', 'desc')->take(4)->get();
+        $ids = array(); // khoi tao mang luu id cua cac san pham tuong tu
+        foreach ($sanpham as $s) { // cho moi san pham trong mang dem
+            array_push($ids, $s->id_product); // day id cua san pham vao mang luu id
+        }
+        return $ids;
+    }
+
     public function getChitiet(Request $req)
     {
         $sanpham = Product::where('id',$req->id)->first();
-        $sp_tuongtu =Product::where('id_type',$sanpham->id_type)->paginate(6);
+        
+        $id = $req->id; // id cua san pham A
+        
+        $ids = $this->sanpham_tuongtu($id);
+        $ids_ordered = implode(',', $ids); // luu thu tu cua id trong mang
+        $sp_tuongtu = Product::whereIn('id', $ids)->orderByRaw(DB::raw("FIELD(id, $ids_ordered)"))->paginate(3); // lay thong tin chi tiet cua san pham có id nam trong mang
 
-        $id_product = $req->id;
-    	return view('page.chitiet_sanpham',compact('sanpham','sp_tuongtu'));
+        $ids = $this->sanpham_banchay();
+        $ids_ordered = implode(',', $ids);
+        $sp_banchay = Product::whereIn('id', $ids)->orderByRaw(DB::raw("FIELD(id, $ids_ordered)"))->get();
+
+        $sp_moi = Product::orderBy('created_at', 'desc')->take(4)->get();
+
+    	return view('page.chitiet_sanpham',compact('sanpham','sp_tuongtu', 'sp_banchay', 'sp_moi'));
     }
     public function getLienHe()
     {

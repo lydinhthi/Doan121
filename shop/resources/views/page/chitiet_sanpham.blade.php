@@ -115,34 +115,22 @@
 						<h3 class="widget-title">Best Sellers</h3>
 						<div class="widget-body">
 							<div class="beta-sales beta-lists">
+								@foreach($sp_banchay as $spbc)
 								<div class="media beta-sales-item">
-									<a class="pull-left" href="product.html"><img src="source/assets/dest/images/products/sales/1.png" alt=""></a>
+									<a class="pull-left" href="product.html"><img src="source/image/product/{{$spbc->image}}" alt=""></a>
 									<div class="media-body">
-										Sample Woman Top
-										<span class="beta-sales-price">$34.55</span>
+										<p class="beta-sales-title">{{$spbc->name}}</p>
+										<p class="single-item-price" style="font-size: 14px;">
+										@if($sptt->promotion_price==0)
+											<span class="flash-sale">{{number_format($spbc->unit_price)}} đồng</span>
+										@else
+											<span class="flash-del">{{number_format($spbc->unit_price)}} đồng</span>
+											<span class="flash-sale">{{number_format($spbc->promotion_price)}} đồng</span>
+										@endif
+										</p>
 									</div>
 								</div>
-								<div class="media beta-sales-item">
-									<a class="pull-left" href="product.html"><img src="source/assets/dest/images/products/sales/2.png" alt=""></a>
-									<div class="media-body">
-										Sample Woman Top
-										<span class="beta-sales-price">$34.55</span>
-									</div>
-								</div>
-								<div class="media beta-sales-item">
-									<a class="pull-left" href="product.html"><img src="source/assets/dest/images/products/sales/3.png" alt=""></a>
-									<div class="media-body">
-										Sample Woman Top
-										<span class="beta-sales-price">$34.55</span>
-									</div>
-								</div>
-								<div class="media beta-sales-item">
-									<a class="pull-left" href="product.html"><img src="source/assets/dest/images/products/sales/4.png" alt=""></a>
-									<div class="media-body">
-										Sample Woman Top
-										<span class="beta-sales-price">$34.55</span>
-									</div>
-								</div>
+								@endforeach
 							</div>
 						</div>
 					</div> <!-- best sellers widget -->
@@ -150,34 +138,22 @@
 						<h3 class="widget-title">New Products</h3>
 						<div class="widget-body">
 							<div class="beta-sales beta-lists">
+								@foreach($sp_moi as $spm)
 								<div class="media beta-sales-item">
-									<a class="pull-left" href="product.html"><img src="source/assets/dest/images/products/sales/1.png" alt=""></a>
+									<a class="pull-left" href="product.html"><img src="source/image/product/{{$spm->image}}" alt=""></a>
 									<div class="media-body">
-										Sample Woman Top
-										<span class="beta-sales-price">$34.55</span>
+										<p class="beta-sales-title">{{$spm->name}}</p>
+										<p class="single-item-price" style="font-size: 14px;">
+										@if($spm->promotion_price==0)
+											<span class="flash-sale">{{number_format($spm->unit_price)}} đồng</span>
+										@else
+											<span class="flash-del">{{number_format($spm->unit_price)}} đồng</span>
+											<span class="flash-sale">{{number_format($spm->promotion_price)}} đồng</span>
+										@endif
+										</p>
 									</div>
 								</div>
-								<div class="media beta-sales-item">
-									<a class="pull-left" href="product.html"><img src="source/assets/dest/images/products/sales/2.png" alt=""></a>
-									<div class="media-body">
-										Sample Woman Top
-										<span class="beta-sales-price">$34.55</span>
-									</div>
-								</div>
-								<div class="media beta-sales-item">
-									<a class="pull-left" href="product.html"><img src="source/assets/dest/images/products/sales/3.png" alt=""></a>
-									<div class="media-body">
-										Sample Woman Top
-										<span class="beta-sales-price">$34.55</span>
-									</div>
-								</div>
-								<div class="media beta-sales-item">
-									<a class="pull-left" href="product.html"><img src="source/assets/dest/images/products/sales/4.png" alt=""></a>
-									<div class="media-body">
-										Sample Woman Top
-										<span class="beta-sales-price">$34.55</span>
-									</div>
-								</div>
+								@endforeach
 							</div>
 						</div>
 					</div> <!-- best sellers widget -->
